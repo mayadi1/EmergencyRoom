@@ -1,0 +1,301 @@
+//Mohamed Ayadi
+// CS 110C Assignment 10: Emergency Room
+//Spring 2015
+
+#include<iostream>
+#include<vector>
+#include<cstdlib>
+#include<assert.h>
+using namespace std;
+
+
+
+
+class PriorityQueue
+{
+    vector<int> pq_keys;
+    void shiftRight(int low, int high);
+    void shiftLeft(int low, int high);
+    void buildHeap();
+public:
+    PriorityQueue(){}
+    PriorityQueue(vector<int>& items)
+    {
+        pq_keys = items;
+        buildHeap();
+    }
+    
+    void enqueue(int item);
+    
+    int dequeue();
+   
+    void print();
+};
+void PriorityQueue::enqueue(int item)
+{
+    pq_keys.push_back(item);
+    shiftLeft(0, pq_keys.size() - 1);
+    return;
+}
+int PriorityQueue::dequeue()
+{
+    assert(pq_keys.size() != 0);
+    int last = pq_keys.size() - 1;
+    int tmp = pq_keys[0];
+    pq_keys[0] = pq_keys[last];
+    pq_keys[last] = tmp;
+    pq_keys.pop_back();
+    shiftRight(0, last-1);
+    return tmp;
+}
+void PriorityQueue::print()
+{
+    int size = pq_keys.size();
+    for (int i = 0; i < size; ++i)
+        cout << pq_keys[i] << "   ";
+    cout << endl;
+}
+void PriorityQueue::shiftLeft(int low, int high)
+{
+    int childIdx = high;
+    while (childIdx > low)
+    {
+        int parentIdx = (childIdx-1)/2;
+        
+        if (pq_keys[childIdx] > pq_keys[parentIdx])
+        {
+            int tmp = pq_keys[childIdx];
+            pq_keys[childIdx] = pq_keys[parentIdx];
+            pq_keys[parentIdx] = tmp;
+            childIdx = parentIdx;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return;
+}
+void PriorityQueue::shiftRight(int low, int high)
+{
+    int root = low;
+    while ((root*2)+1 <= high)
+    {
+        int leftChild = (root * 2) + 1;
+        int rightChild = leftChild + 1;
+        int swapIdx = root;
+        
+        if (pq_keys[swapIdx] < pq_keys[leftChild])
+        {
+            swapIdx = leftChild;
+        }
+        
+        if ((rightChild <= high) && (pq_keys[swapIdx] < pq_keys[rightChild]))
+        {
+            swapIdx = rightChild;
+        }
+        
+        if (swapIdx != root)
+        {
+            int tmp = pq_keys[root];
+            pq_keys[root] = pq_keys[swapIdx];
+            pq_keys[swapIdx] = tmp;
+            root = swapIdx;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return;
+}
+void PriorityQueue::buildHeap()
+{
+    
+    int size = pq_keys.size();
+    int midIdx = (size -2)/2;
+    while (midIdx >= 0)
+    {
+        shiftRight(midIdx, size-1);
+        --midIdx;
+    }
+    return;
+}
+
+struct Patient
+{
+	string name;
+	int priority;
+
+};
+
+int main()
+{
+	PriorityQueue ER;
+
+	int Num;
+	string Name;
+
+	Patient myStruct[2];
+
+
+		
+	cout << "\nEnter Patient name: ";
+	cin >> myStruct[0].name;
+	cout << "\nEnter Patient priority: ";
+	cin >> myStruct[0].priority;
+
+	cout << "\nEnter Patient name: ";
+        cin >> myStruct[1].name;
+        cout << "\nEnter Patient priority: ";
+        cin >> myStruct[1].priority;
+        
+	cout << "\nEnter Patient name: ";
+        cin >> myStruct[2].name;
+        cout << "\nEnter Patient priority: ";
+        cin >> myStruct[2].priority;
+        
+
+
+	for (int i=0; i<3; i++)
+	{
+		ER.enqueue(myStruct[i].priority);
+	}
+
+
+
+
+
+	int temp =0;
+ 	temp = ER.dequeue();
+        for (int x=0;x<3;x++)
+        
+        {
+                
+                if(myStruct[x].priority == temp)
+     
+		{   
+                        cout << myStruct[x].name << " Will now see the doctor.\n";
+        
+        	}
+                
+     	}
+
+
+	temp = ER.dequeue();
+        for (int b=0;b<3;b++)
+        
+        {
+        
+                if(myStruct[b].priority == temp)
+        
+                {
+                        cout << myStruct[b].name << " Will now see the doctor.\n";
+        
+                }
+        
+        }
+        
+	temp = ER.dequeue();
+        for (int h=0;h<3;h++)
+        
+        {
+        
+                if(myStruct[h].priority == temp)
+        
+                {
+                        cout << myStruct[h].name << " Will now see the doctor.\n";
+        
+                }
+        
+        }
+
+
+	return 0;
+}
+/*
+//OUTPUT
+[mayadi1@hills ~]$ g++ queueheap.cpp
+[mayadi1@hills ~]$ a.out
+
+Enter Patient name: jouba
+
+Enter Patient priority: 9
+
+Enter Patient name: chakib
+
+Enter Patient priority: 4
+
+Enter Patient name: nizar
+
+Enter Patient priority: 5
+jouba Will now see the doctor.
+nizar Will now see the doctor.
+chakib Will now see the doctor.
+[mayadi1@hills ~]$ a.out
+
+Enter Patient name: jouba
+
+Enter Patient priority: 9
+
+Enter Patient name: Bob
+
+Enter Patient priority: 5
+
+Enter Patient name: max
+
+Enter Patient priority: 1
+jouba Will now see the doctor.
+Bob Will now see the doctor.
+max Will now see the doctor.
+
+[mayadi1@hills ~]$ a.out
+
+Enter Patient name: Julio
+
+Enter Patient priority: 2
+
+Enter Patient name: Paul
+
+Enter Patient priority: 7
+
+Enter Patient name: Chang
+
+Enter Patient priority: 5
+Paul Will now see the doctor.
+Chang Will now see the doctor.
+Julio Will now see the doctor.
+[mayadi1@hills ~]$ a.out
+
+Enter Patient name: Jennifer
+
+Enter Patient priority: 6
+
+Enter Patient name: Stacy
+
+Enter Patient priority: 7
+
+Enter Patient name: jouba
+
+Enter Patient priority: 1
+Stacy Will now see the doctor.
+Jennifer Will now see the doctor.
+jouba Will now see the doctor.
+[mayadi1@hills ~]$ a.out
+
+Enter Patient name: jouba
+
+Enter Patient priority: 5
+
+Enter Patient name: Stacy
+
+Enter Patient priority: 5
+
+Enter Patient name: Dan
+
+Enter Patient priority: 9
+Dan Will now see the doctor.
+jouba Will now see the doctor.
+Stacy Will now see the doctor.
+
+*/
